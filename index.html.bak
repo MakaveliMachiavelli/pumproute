@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PumpRoute — Recurring Pump-Out Scheduler for Septic &amp; Grease-Trap Haulers (Free)</title>
+<meta name="description" content="Know who's due for a pump-out before they call someone else. Free recurring-service scheduler for septic, grease-trap and portable-sanitation haulers: intervals, overdue alerts, printable route sheet. No subscription — septic software runs $150–500/month.">
+<link rel="canonical" href="https://makavelimachiavelli.github.io/pumproute/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%237c2d12'/%3E%3Ctext x='32' y='44' font-size='30' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3E%F0%9F%9A%9B%3C/text%3E%3C/svg%3E">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"How do I track recurring septic or grease-trap pump-outs?","acceptedAnswer":{"@type":"Answer","text":"Store each customer with their service interval (e.g. 180 days) and last service date. The scheduler computes the next due date for every customer, flags overdue accounts, and prints a route sheet for the week — that's the whole system."}},
+    {"@type":"Question","name":"How much does septic scheduling software cost?","acceptedAnswer":{"@type":"Answer","text":"Niche tools run $30–$500+/month per truck (QuoteIQ ~$30/mo, PumpDocket $149/mo, DynoRoute $199+/mo, ServiceCore $200+/mo). PumpRoute's core scheduler is free (up to 10 customers); PRO is $49 one-time for unlimited customers + CSV import/export."}},
+    {"@type":"Question","name":"Does this replace Jobber or ServiceCore?","acceptedAnswer":{"@type":"Answer","text":"No — those add invoicing, GPS, billing integrations. PumpRoute does one thing: recurring pump-out scheduling + route sheets, for a one-time price instead of a subscription. Many small haulers run it alongside a simple invoicing setup."}}
+  ]
+}
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">Pump<span>Route</span></div>
+  <nav>
+    <span id="proBadge" class="badge hidden">PRO</span>
+    <a href="#faq">FAQ</a>
+    <button id="proBtn" class="btn-link">Get PRO — $49</button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>Know who's due for a pump-out<br><span class="hl">before they call someone else.</span></h1>
+    <p class="sub">Recurring-service scheduling for septic, grease-trap and porta-john haulers: intervals, <strong>overdue alerts</strong>, and a <strong>printable route sheet</strong> — free, in your browser, no account. Septic software bills $150–500/month; this is one simple tool that does the one thing that matters.</p>
+    <div class="hero-chips">
+      <span>✓ Overdue + due-soon alerts</span>
+      <span>✓ Printable route sheet</span>
+      <span>✓ Works offline</span>
+      <span>✓ No subscription</span>
+    </div>
+  </section>
+
+  <div class="app-grid">
+    <section class="panel">
+      <div class="stats">
+        <div class="stat red"><div class="stat-n" id="stOverdue">0</div><div class="stat-l">OVERDUE</div></div>
+        <div class="stat amber"><div class="stat-n" id="stWeek">0</div><div class="stat-l">DUE ≤14 DAYS</div></div>
+        <div class="stat"><div class="stat-n" id="stMonth">0</div><div class="stat-l">DUE ≤30 DAYS</div></div>
+        <div class="stat blue"><div class="stat-n" id="stTotal">0</div><div class="stat-l">CUSTOMERS</div></div>
+      </div>
+
+      <div class="items-head">
+        <h2>Customers</h2>
+        <button id="addRow" class="btn-small">+ Add customer</button>
+      </div>
+      <div id="rows"></div>
+      <p class="hint" id="freeCap"></p>
+
+      <div class="actions">
+        <button id="printBtn" class="btn primary">🖨️ Print route sheet</button>
+        <button id="exportBtn" class="btn hidden">⬇️ Export CSV (PRO)</button>
+        <label class="btn hidden" id="importWrap">⬆️ Import CSV (PRO)<input id="importFile" type="file" accept=".csv" style="display:none"></label>
+      </div>
+      <p class="hint">Data stays in this browser. "Mark serviced" sets last-service = today and rolls the next due date.</p>
+    </section>
+
+    <section class="panel">
+      <h2 class="preview-title">This week's route</h2>
+      <p class="hint">Everyone overdue or due within 14 days, in due-date order.</p>
+      <div id="doc" class="route-doc">
+        <div class="rd-head">
+          <div class="rd-title">PUMP-OUT ROUTE SHEET</div>
+          <div class="rd-date" id="p_date">—</div>
+        </div>
+        <table class="rd-table">
+          <thead><tr><th>✓</th><th>Customer</th><th>Location / phone</th><th>Service</th><th>Due</th><th>Status</th></tr></thead>
+          <tbody id="p_rows"></tbody>
+        </table>
+        <div class="rd-sign">Driver: ________________ · Truck #: ________ · Notes: ______________________</div>
+        <div class="rd-foot" id="p_foot">Made with PumpRoute — free pump-out scheduler</div>
+      </div>
+    </section>
+  </div>
+
+  <section class="marketing">
+    <h2>Why haulers use it</h2>
+    <div class="cards">
+      <div class="card"><h3>📞 Recurring = your best customers</h3><p>The money in pumping is repeat accounts on intervals. Miss their due date and they call whoever's ad they see. This tool makes sure you call first.</p></div>
+      <div class="card"><h3>🧾 Route sheet, not software hell</h3><p>One printable sheet: who, where, what service, due date, checkbox. Drivers tick boxes; you mark them serviced when they're back.</p></div>
+      <div class="card"><h3>💸 One-time, not $200/month</h3><p>Septic-specific software starts around $30/month and climbs past $200 with per-truck pricing. PumpRoute is free for 10 customers; $49 once for unlimited.</p></div>
+    </div>
+
+    <h2 id="faq">FAQ</h2>
+    <div class="faq-item"><h3>How do intervals work?</h3><p>Set days between services (90 = quarterly, 180 = semi-annual, 365 = annual, any custom number). Next due = last service date + interval. That's it — the math you'd otherwise do on a wall calendar.</p></div>
+    <div class="faq-item"><h3>What's in the free tier?</h3><p>Everything, up to 10 customers: alerts, route sheet, printing, offline use. PRO ($49 one-time) removes the cap and adds CSV import/export for moving your list in and out.</p></div>
+    <div class="faq-item"><h3>Can my customers see this?</h3><p>No — this is your private tool in your browser. Use it to know when to call them; many haulers also print reminder postcards from the overdue list.</p></div>
+
+    <div class="cta-box">
+      <h2>PumpRoute PRO — $49 one-time</h2>
+      <ul>
+        <li>♾️ <strong>Unlimited customers</strong> — the free cap is 10</li>
+        <li>⬇️ <strong>CSV export / import</strong> — move your customer list in and out anytime</li>
+        <li>🖨️ <strong>Clean route sheets</strong> — no footer credit</li>
+      </ul>
+      <p class="once">One payment. Less than one week of the $150/mo tools.</p>
+      <button id="proBtn2" class="btn primary big">Unlock PRO — $49</button>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>PumpRoute — free recurring pump-out scheduler for septic, grease-trap &amp; portable-sanitation haulers.</p>
+</footer>
+
+<!-- PAY MODAL -->
+<div id="payModal" class="modal hidden">
+  <div class="modal-card">
+    <button class="modal-x" id="payClose">✕</button>
+    <h2>Unlock PumpRoute PRO</h2>
+    <p class="price">$49 <span>one-time · lifetime · no subscription</span></p>
+    <div class="qr-box">
+      <a id="payLink" href="#" class="pay-alt">💳 Pay by card →</a>
+      <img src="pay-qr.svg" alt="Payment QR (replace with merchant QR)" width="180" height="180">
+    </div>
+    <ol class="pay-steps">
+      <li>Pay $49 (card link or QR).</li>
+      <li>Enter the unlock code you receive.</li>
+    </ol>
+    <div class="code-row">
+      <input id="codeInput" placeholder="Enter unlock code">
+      <button id="codeBtn" class="btn primary">Unlock</button>
+    </div>
+    <p class="code-msg" id="codeMsg"></p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
