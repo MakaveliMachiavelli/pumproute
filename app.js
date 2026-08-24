@@ -2,7 +2,7 @@
 'use strict';
 
 /* PRO unlock codes. OWNER: change before promoting (see PAYMENTS.md). */
-const PRO_CODES = ['PUMPROUTE-49', 'PR-DEMO'];
+const PRO_CODES = ['PR-PRO-49-55D6-7BF4', 'PR-PRO-49-DEMO-1109-7C06'];
 const FREE_CAP = 10;
 const LS = { data: 'pr_data', pro: 'pr_pro' };
 const SERVICES = ['Septic pump-out', 'Grease trap', 'Porta-john service', 'Effluent filter', 'Inspection', 'Other'];
